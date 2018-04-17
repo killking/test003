@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/task
+        http://www.springframework.org/schema/task/spring-task.xsd">
+
+    <!-- 自动扫描 -->
+    <context:component-scan base-package="com.shsxt"/>
+    <!-- 配置aop -->
+    <aop:aspectj-autoproxy/>
+    <!-- 定时任务驱动 -->
+    <task:annotation-driven />
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="smtp.163.com" />
+        <property name="port" value="25" />
+        <property name="defaultEncoding" value="utf-8"></property>
+        <property name="username" value="shsxt_test@163.com"></property>
+        <property name="password" value="1qaz2wsx"></property>
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.smtp.auth">true</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="templateMessage" class="org.springframework.mail.SimpleMailMessage">
+        <property name="from" value="shsxt_test@163.com" />
+        <property name="subject" value="spring_mail" />
+    </bean>
+
+
+    <!-- 发送附件 -->
+    <bean id="mailFileSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="smtp.163.com" />
+        <property name="port" value="25" />
+        <property name="defaultEncoding" value="utf-8"></property>
+        <property name="username" value="shsxt_test@163.com"></property>
+        <property name="password" value="1qaz2wsx"></property>
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.smtp.auth">true</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- 定时任务bean -->
+    <bean id="myJobs" class="com.shsxt.task.MyJobs"></bean>
+    <task:scheduled-tasks>
+        <!-- 每2秒执行一次 -->
+        <task:scheduled ref="myJobs" method="job1" cron="0/2 * * * * ?"/>
+        <!-- 每5秒执行一次 -->
+        <task:scheduled ref="myJobs" method="job2" cron="0/5 * * * * ?"/>
+    </task:scheduled-tasks>
+</beans>
